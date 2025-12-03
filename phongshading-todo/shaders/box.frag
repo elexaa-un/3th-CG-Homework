@@ -46,7 +46,6 @@ void main()
 
 	/*TODO2:根据phong shading方法计算ambient,diffuse,specular*/
 	
-	vec3 norm = normalize(Normal);
 	
 	// ambient
 	vec3 ambient = ambientStrength * lightColor;
@@ -56,7 +55,6 @@ void main()
 	vec3 diffuse = diffuseStrength * diff * lightColor;
 	
 	// specular (Blinn-Phong)
-	vec3 halfDir = normalize(lightDir + viewDir);
 	float spec = pow(max(dot(norm, halfDir), 0.0), shininess);
 	vec3 specular = specularStrength * spec * lightColor;
 	
@@ -69,6 +67,7 @@ void main()
 	
 	FragColor = vec4(resultColor, 1.0);
 }
+
 
 
 
