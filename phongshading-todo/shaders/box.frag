@@ -45,28 +45,32 @@ void main()
 
 
 	/*TODO2:根据phong shading方法计算ambient,diffuse,specular*/
-	
-	
-	// ambient
+		
 	vec3 ambient = ambientStrength * lightColor;
 	
-	// diffuse
+	// diffuse (使用纹理作为 Kd)
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = diffuseStrength * diff * lightColor;
+	vec3 diffuse = diffuseStrength * diff * TextureColor * lightColor;
 	
-	// specular (Blinn-Phong)
-	float spec = pow(max(dot(norm, halfDir), 0.0), shininess);
-	vec3 specular = specularStrength * spec * lightColor;
+	// specular（需要处理背面情况）
+	vec3 specular;
+	if (dot(lightDir, norm) < 0.0) {
+	    specular = vec3(0.0);   // 背面无高光
+	} else {
+	    float spec = pow(max(dot(norm, halfDir), 0.0), shininess);
+	    specular = specularStrength * spec * lightColor;
+	}
 	
 	// combine
 	vec3 lightReflectColor = ambient + diffuse + specular;
 	
-	// shadow attenuation (not full black)
+	// shadow mix
 	float shadow = shadowCalculation(FragPosLightSpace, norm, lightDir);
-	vec3 resultColor = (1.0 - shadow * 0.5) * lightReflectColor * TextureColor;
+	vec3 resultColor = (1.0 - shadow * 0.5) * lightReflectColor;
 	
 	FragColor = vec4(resultColor, 1.0);
 }
+
 
 
 
